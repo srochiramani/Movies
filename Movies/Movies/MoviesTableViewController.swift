@@ -42,12 +42,32 @@ class MoviesTableViewController: UIViewController, UITableViewDataSource, UITabl
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        var cell = tableView.dequeueReusableCellWithIdentifier("MovieTableCell", forIndexPath: indexPath) as! UITableViewCell
+        var cell = tableView.dequeueReusableCellWithIdentifier("MovieTableCell", forIndexPath: indexPath) as! MovieTableViewCell
         
         let movie = self.movies![indexPath.row]
-        cell.textLabel?.text = movie["title"] as? String
+        cell.titleLabel?.text = movie["title"] as? String
+        cell.synopsisLabel.text = movie["synopsis"] as? String
+        
+        let posterUrl = NSURL(string: movie.valueForKeyPath("posters.thumbnail") as! String)!
+        cell.posterImageView.setImageWithURL(posterUrl)
+        
         return cell
         
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        let cell = sender as! MovieTableViewCell
+        let indexPath = tableView.indexPathForCell(cell)!
+        
+        let movie = self.movies![indexPath.row]
+        let movieDetailsViewController = segue.destinationViewController as! MoviesDetailViewController
+        movieDetailsViewController.movie = movie
+
     }
     
     func fetchLatestMovies() {
