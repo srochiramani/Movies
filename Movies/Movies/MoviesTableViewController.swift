@@ -15,6 +15,8 @@ class MoviesTableViewController: UIViewController, UITableViewDataSource, UITabl
     var movies : [NSDictionary]?
 
     @IBOutlet weak var tableView: UITableView!
+
+    @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,7 +26,6 @@ class MoviesTableViewController: UIViewController, UITableViewDataSource, UITabl
         
         fetchLatestMovies()
 
-        // Do any additional setup after loading the view.
     }
 
     override func didReceiveMemoryWarning() {
@@ -71,6 +72,7 @@ class MoviesTableViewController: UIViewController, UITableViewDataSource, UITabl
     }
     
     func fetchLatestMovies() {
+        self.loadingIndicator.startAnimating()
         let url = NSURL(string: "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/box_office.json?apikey=" + instructorKey)!
         let request = NSURLRequest(URL: url)
         let queue = NSOperationQueue.mainQueue()
@@ -86,6 +88,7 @@ class MoviesTableViewController: UIViewController, UITableViewDataSource, UITabl
                     self.tableView.reloadData()
                 }
             }
+            self.loadingIndicator.stopAnimating()
         })
     }
 
