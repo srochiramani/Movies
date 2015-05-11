@@ -1,20 +1,34 @@
-# Movies
-View movies from the Rotten Tomatoes Database
+## Movies
 
-Time spent: 1.5 hours spent in total
+This is a movies app displaying box office using the [Rotten Tomatoes API](http://developer.rottentomatoes.com/docs/read/JSON).
 
-Completed user stories:
+Time spent: `8 hours`
 
- * [] Required: User can view a list of latest box office movies including title, cast and tomatoes rating
- * [] Required: User can click on a movie in the list to bring up a details page with additional information such as synopsis
- * [] Optional: Placeholder image is used for movie posters loaded in from the network
- 
-Notes:
+### Features
 
-Walkthrough of all user stories:
+#### Required
 
-![Video Walkthrough](anim_rotten_tomatoes.gif)
+- [X] User can view a list of movies. Poster images load asynchronously.
+- [X] User can view movie details by tapping on a cell.
+- [X] User sees loading state while waiting for the API.
+- [X] User sees error message when there is a network error: http://cl.ly/image/1l1L3M460c3C
+- [X] User can pull to refresh the movie list.
 
-GIF created with [LiceCap](http://www.cockos.com/licecap/).
+#### Optional
 
+- [ ] All images fade in.
+- [ ] For the larger poster, load the low-res first and switch to high-res when complete.
+- [ ] All images should be cached in memory and disk: AppDelegate has an instance of `NSURLCache` and `NSURLRequest` makes a request with `NSURLRequestReturnCacheDataElseLoad` cache policy. I tested it by turning off wifi and restarting the app.
+- [ ] Customize the highlight and selection effect of the cell.
+- [ ] Customize the navigation bar.
+- [ ] Add a tab bar for Box Office and DVD.
+- [ ] Add a search bar: pretty simple implementation of searching against the existing table view data.
+
+### Walkthrough
+![Video Walkthrough](MoviesWalkthrough.gif)
+
+Credits
+---------
+* [Rotten Tomatoes API](http://developer.rottentomatoes.com/docs/read/JSON)
+* [AFNetworking](https://github.com/AFNetworking/AFNetworking)
 
