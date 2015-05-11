@@ -14,19 +14,30 @@ class MoviesDetailViewController: UIViewController {
     @IBOutlet weak var movieSynopsisLabel: UILabel!
     @IBOutlet weak var bgImageView: UIImageView!
     
+    @IBOutlet weak var userReviewScoreIcon: UIImageView!
+    @IBOutlet weak var userReviewScoreLabel: UILabel!
+    
     var movie : NSDictionary!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        movieTitleLabel.text = movie["title"] as! String
-        movieSynopsisLabel.text = movie["synopsis"] as! String
+        let movieTitle = movie["title"] as! String
+        let synopsis = movie["synopsis"] as! String
+        
+        self.title = movieTitle
+        movieTitleLabel.text = movieTitle
+        movieSynopsisLabel.text = synopsis
         
         let posterThumbUrl = movie.valueForKeyPath("posters.thumbnail") as! String
         let posterHighResUrl = getPosterHighResUrl(posterThumbUrl)
         bgImageView.setImageWithURL(NSURL(string: posterHighResUrl))
+        
+        // user review score
+        userReviewScoreIcon.setImageWithURL(NSURL(string: "http://d3biamo577v4eu.cloudfront.net/static/images/icons/popcorn_27x31.png"))
+        let audienceScore = movie.valueForKeyPath("ratings.audience_score")!
+        userReviewScoreLabel.text = audienceScore.stringValue + "%"
 
-        // Do any additional setup after loading the view.
     }
 
     override func didReceiveMemoryWarning() {

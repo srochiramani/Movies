@@ -14,9 +14,13 @@ class MovieTableViewCell: UITableViewCell {
     @IBOutlet weak var synopsisLabel: UILabel!
     @IBOutlet weak var posterImageView: UIImageView!
     
+    @IBOutlet weak var userReviewScoreIcon: UIImageView!
+    @IBOutlet weak var userReviewScoreLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        userReviewScoreIcon.setImageWithURL(NSURL(string: "http://d3biamo577v4eu.cloudfront.net/static/images/icons/popcorn_27x31.png"))
     }
 
     override func setSelected(selected: Bool, animated: Bool) {

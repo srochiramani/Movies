@@ -63,6 +63,9 @@ class MoviesTableViewController: UIViewController, UITableViewDataSource, UITabl
         let posterUrl = NSURL(string: movie.valueForKeyPath("posters.thumbnail") as! String)!
         cell.posterImageView.setImageWithURL(posterUrl)
         
+        let audienceScore = movie.valueForKeyPath("ratings.audience_score")!
+        cell.userReviewScoreLabel.text = audienceScore.stringValue + "%"
+        
         return cell
         
     }
