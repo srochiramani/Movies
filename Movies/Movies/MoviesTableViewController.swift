@@ -10,7 +10,7 @@ import UIKit
 
 class MoviesTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    let instructorKey = "dagqdghwaq3e3mxyrp7kmmj5"
+    let instructorKey = "ss" //"dagqdghwaq3e3mxyrp7kmmj5"
     
     var movies : [NSDictionary]?
 
@@ -18,11 +18,15 @@ class MoviesTableViewController: UIViewController, UITableViewDataSource, UITabl
 
     @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
     
+    @IBOutlet weak var errorMessageLabel: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.tableView.dataSource = self
         self.tableView.delegate = self
+        
+        self.errorMessageLabel.hidden = true
         
         fetchLatestMovies()
 
@@ -72,24 +76,49 @@ class MoviesTableViewController: UIViewController, UITableViewDataSource, UITabl
     }
     
     func fetchLatestMovies() {
-        self.loadingIndicator.startAnimating()
+        showLoadingIndicator()
         let url = NSURL(string: "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/box_office.json?apikey=" + instructorKey)!
         let request = NSURLRequest(URL: url)
         let queue = NSOperationQueue.mainQueue()
         NSURLConnection.sendAsynchronousRequest(request, queue: queue, completionHandler:{ (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
             var err: NSError
-            println(" data: \(data) response: \(response) + error: \(error)")
+            let httpResponse = response as! NSHTTPURLResponse
+            println("response: \(response) + error: \(error)")
             if (data != nil) {
                 var jsonResult: NSDictionary? = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: nil) as? NSDictionary
                 println("AsSynchronous\(jsonResult)")
                 if (jsonResult != nil) {
-                    self.movies = jsonResult!["movies"] as! [NSDictionary]?
-                    println("movies size: \(self.movies!.count)")
-                    self.tableView.reloadData()
+                    let errorMessage = jsonResult!["error"] as? String
+                    if (errorMessage != nil) {
+                        self.showErrorMessage("Network Error: " + errorMessage!)
+                    } else {
+                        self.movies = jsonResult!["movies"] as! [NSDictionary]?
+                        println("movies size: \(self.movies!.count)")
+                        self.tableView.reloadData()
+                        self.hideLoadingIndicator()
+                    }
                 }
             }
-            self.loadingIndicator.stopAnimating()
         })
+    }
+    
+    func showLoadingIndicator() {
+        self.loadingIndicator.hidden = false
+        self.loadingIndicator.startAnimating()
+        self.tableView.hidden = true
+    }
+    
+    func hideLoadingIndicator() {
+        self.loadingIndicator.stopAnimating()
+        self.loadingIndicator.hidden = true
+        self.tableView.hidden = false
+    }
+    
+    func showErrorMessage(error : String) {
+        self.errorMessageLabel.text = error
+        self.errorMessageLabel.hidden = false
+        self.tableView.hidden = true
+        self.loadingIndicator.hidden = true
     }
 
 }
