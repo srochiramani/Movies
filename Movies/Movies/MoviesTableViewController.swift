@@ -10,7 +10,7 @@ import UIKit
 
 class MoviesTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    let instructorKey = "ss" //"dagqdghwaq3e3mxyrp7kmmj5"
+    let instructorKey = "dagqdghwaq3e3mxyrp7kmmj5"
     
     var movies : [NSDictionary]?
 
@@ -20,6 +20,8 @@ class MoviesTableViewController: UIViewController, UITableViewDataSource, UITabl
     
     @IBOutlet weak var errorMessageLabel: UILabel!
     
+    var pullToRefresh : UIRefreshControl!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,6 +30,11 @@ class MoviesTableViewController: UIViewController, UITableViewDataSource, UITabl
         
         self.errorMessageLabel.hidden = true
         
+        self.pullToRefresh = UIRefreshControl()
+        self.pullToRefresh.addTarget(self, action: "onRefresh", forControlEvents: UIControlEvents.ValueChanged)
+        self.tableView.insertSubview(self.pullToRefresh, atIndex: 0)
+        
+        showInitialLoadingIndicator()
         fetchLatestMovies()
 
     }
@@ -76,7 +83,6 @@ class MoviesTableViewController: UIViewController, UITableViewDataSource, UITabl
     }
     
     func fetchLatestMovies() {
-        showLoadingIndicator()
         let url = NSURL(string: "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/box_office.json?apikey=" + instructorKey)!
         let request = NSURLRequest(URL: url)
         let queue = NSOperationQueue.mainQueue()
@@ -90,25 +96,30 @@ class MoviesTableViewController: UIViewController, UITableViewDataSource, UITabl
                 if (jsonResult != nil) {
                     let errorMessage = jsonResult!["error"] as? String
                     if (errorMessage != nil) {
-                        self.showErrorMessage("Network Error: " + errorMessage!)
+                        self.showErrorMessage("Error: " + errorMessage!)
                     } else {
                         self.movies = jsonResult!["movies"] as! [NSDictionary]?
                         println("movies size: \(self.movies!.count)")
                         self.tableView.reloadData()
-                        self.hideLoadingIndicator()
+                        self.hideInitialLoadingIndicator()
                     }
                 }
             }
+            self.pullToRefresh.endRefreshing()
         })
     }
     
-    func showLoadingIndicator() {
+    func onRefresh() {
+        self.fetchLatestMovies()
+    }
+    
+    func showInitialLoadingIndicator() {
         self.loadingIndicator.hidden = false
         self.loadingIndicator.startAnimating()
         self.tableView.hidden = true
     }
     
-    func hideLoadingIndicator() {
+    func hideInitialLoadingIndicator() {
         self.loadingIndicator.stopAnimating()
         self.loadingIndicator.hidden = true
         self.tableView.hidden = false
